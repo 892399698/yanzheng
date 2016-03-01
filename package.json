@@ -17,6 +17,8 @@
   },
   "homepage": "https://github.com/892399698/yanzheng#readme",
   "dependencies": {
-    "express": "^4.13.4"
+    "ejs": "^2.4.1",
+    "express": "^4.13.4",
+    "zepto": "^1.0.1"
   }
 }

@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title><%= title %></title>
+    <link href="/stylesheets/common.css" type="text/css" rel="stylesheet" />
+  </head>
+  <body>
+      <div class="yanzheng">
+        <header class="title">SEXY SECRET</header>
+        <form>
+        <div><input id="number" type="text" value="" placeholder="请输入要查询的序号" /></div>
+        <div><input class="submit" type="submit" value="开始查询" /></div>
+        </form>
+      </div>
+    <script type="text/javascript" src="/zepto/zepto.min.js"></script>
+    <script type="text/javascript">
+      $("form").submit(function(){
+        var v=$("#number").val(),
+          t=$(this),
+          text=$(".submit").val();
+        if(!v){
+          return false;
+        }
+        if(text==="开始查询"){
+          $(".submit").val("查询中..")
+        }else{
+          return false;
+        }
+        $.ajax({
+          url:"/routers/index",
+          data:{value:v},
+          method:"post",
+          success:function(res){
+            console.log(res)
+          },
+          complete:function(){
+            $(".submit").val("开始查询")
+          }
+        })
+
+        return false
+      })
+    </script>
+  </body>
+</html>
