@@ -1,0 +1,22 @@
+{
+  "name": "yanzheng",
+  "version": "1.0.0",
+  "description": "验证序列号是否存在",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/892399698/yanzheng.git"
+  },
+  "author": "C盘",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/892399698/yanzheng/issues"
+  },
+  "homepage": "https://github.com/892399698/yanzheng#readme",
+  "dependencies": {
+    "express": "^4.13.4"
+  }
+}
