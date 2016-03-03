@@ -1,9 +1,11 @@
 var express = require('express');
 var app = express();
 var routers = require('./routes/routers');
+var login = require('./routes/login');
 var path = require('path')
 
 app.use('/routers', routers);
+app.use('/login', login);
 app.use(express.static('public'));
 app.use(express.static('node_modules'));
 app.set('views', path.join(__dirname, 'views'));
