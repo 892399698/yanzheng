@@ -3,7 +3,7 @@ var mongoose = require("mongoose");
 // var config = require("../config");
 var router = express.Router();
 router.get("/", function(req, res) {
-    console.log(req)
+    console.log("d")
     res.send({
         msg: "成功"
     })
