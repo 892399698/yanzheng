@@ -2,7 +2,10 @@ var express = require('express');
 var app = express();
 var routers = require('./routes/routers');
 var login = require('./routes/login');
-var path = require('path')
+var path = require('path');
+var bodyParser = require("body-parser");
+app.use(bodyParser.urlencoded({ extended: false }));  
+
 
 app.use('/routers', routers);
 app.use('/login', login);
