@@ -1,0 +1,25 @@
+.cp-toolbar{
+  margin:10px 0 0 10px;
+}
+.mg-5{
+  margin-top:5px;
+}
+.mg-10{
+  margin-top:10px;
+}
+.mg-20{
+  margin-top:20px;
+}
+.mg-30{
+  margin-top:30px;
+}
+.mg-40{
+  margin-top:40px;
+}
+
+.main-content{
+  position: relative;
+}
+.footer{
+  position: absolute;
+}

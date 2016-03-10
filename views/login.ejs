@@ -108,9 +108,9 @@
             },
             type:"post",
             success:function(res){
-                console.log(res)
+                // console.log(res)
                 if(res.code===1000){
-                    window.location.href="/routers/index"
+                    window.location.href="/admin"
                 }else{
                     alert(res.msg);
                 }

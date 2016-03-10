@@ -36,21 +36,23 @@ router.post("/", function(req, res) {
         // yay!
         Admin.findOne({ name: u }, function(err, doc) {
             if (err) return console.error(err);
-            console.log( doc)
+            // console.log( doc)
             if (doc && common.md5(p) === doc.password) {
-              res.send({
+                req.session.user = doc;
+                res.send({
                     code: 1000,
                     msg: "登陆成功!"
                 })
             } else {
+                req.session.error="用户名或密码错误"
                 res.send({
                     code: 2000,
                     msg: "用户名或密码错误!",
-                    p:common.md5(p)
+                    // p:common.md5(p)
                 })
 
             }
-            db.close()
+            db.close();
         })
 
     });

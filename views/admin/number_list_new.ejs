@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+ <% include head.ejs %>
+</head>
+
+<body class="sticky-header">
+
+<section>
+    <!-- left side start-->
+    <div class="left-side sticky-left-side">
+
+        <!--logo and iconic logo start-->
+        <div class="logo">
+            <a href="index.html"><img src="/muban/images/logo.png" alt=""></a>
+        </div>
+
+        <div class="logo-icon text-center">
+            <a href="index.html"><img src="/muban/images/logo_icon.png" alt=""></a>
+        </div>
+        <!--logo and iconic logo end-->
+
+        <div class="left-side-inner">
+            <% include left.ejs %>
+
+        </div>
+    </div>
+    <!-- left side end-->
+    
+    <!-- main content start-->
+    <div class="main-content" >
+
+        <!-- header section start-->
+        <div class="header-section">
+
+            <!--toggle button start-->
+            <a class="toggle-btn"><i class="fa fa-bars"></i></a>
+            <!--toggle button end-->
+
+            <div class="pull-left cp-toolbar">
+                <a href="/admin/number_list/new" class="btn btn-success btn-sm">添加号码</a>
+            </div>
+            <!--notification menu start -->
+            <div class="menu-right" style="margin-top:10px;">
+                <ul class="notification-menu">
+                    <li>
+                        <a href="/logout"><i title="退出" class="fa fa-sign-out"></i>退出</a>
+                    </li>
+
+                </ul>
+            </div>
+            <!--notification menu end -->
+            
+        </div>
+        <!-- header section end-->
+
+
+
+        <!--body wrapper start-->
+        <div class="clearfix">
+            <form method="get" class="form-horizontal bucket-form mg-20 col-md-10">
+                <div class="form-group">
+                    <label class="col-sm-2 control-label">号码:</label>
+                    <div class="col-sm-10">
+                        <textarea rows="6" placeholder="输入号码,回车分割" class="form-control"></textarea>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="col-lg-offset-2 col-lg-10">
+                        <button id="submit" type="submit" class="btn btn-primary">保存</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+
+        <!--body wrapper end-->
+
+        <!--footer section start-->
+        <% include footer.ejs %>
+        <!--footer section end-->
+
+
+    </div>
+    <!-- main content end-->
+</section>
+<% include scripts.ejs %>
+<script type="text/javascript">
+    $("form").submit(function(){
+        var v=$("textarea").val();
+        console.log(v)
+        if(!v){
+            alert("号码不能为空!");
+            return false;
+        }
+        // $.ajax({
+        //     url:"",
+        //     type:"post",
+        //     data:data,
+        //     success:function(){
+
+        //     }
+        // })
+        return false;
+    })
+</script>
+</body>
+</html>
