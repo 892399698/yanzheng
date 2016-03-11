@@ -29,21 +29,33 @@ router.post("/number_list/new", function(req, res) {
         var arr = data.split(/\n+/);
         var errs = [];
         for (var i = 0, l = arr; i < l; i++) {
-            Num.findOne({ serial_number: arr[i] }, function(err, doc) {
-                if (err) {
-                    errs.push(arr[i] + err);
-                    return false;
-                }
-                if (!doc) {
-                    Num.save({
-
+            // Num.findOne({ serial_number: arr[i] }, function(err, doc) {
+                // if (err) {
+                //     errs.push(arr[i] + err);
+                //     return false;
+                // }
+                // if (!doc) {
+                    var data = new Article({
+                        serial_number: arr[i]
+                    });
+                    data.save(function(err, doc) {
+                      if(err){
+                        errs.push(arr[i] + err);
+                        return false;
+                      }
                     })
-                }
+                // }
 
 
-            })
+            // })
 
         }
+        res.send({
+          code:1000,
+          msg:"处理完成",
+          errs:errs
+        })
+        //循环结束
 
 
     })
