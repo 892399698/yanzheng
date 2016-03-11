@@ -9,6 +9,6 @@ var NumSchema = new mongoose.Schema({
 }, {
     collection: "numbers"
 });
-var Num = mongoose.model('Num', NumSchema);
+var Num = mongoose.model('numbers', NumSchema);
 
 module.exports=Num;

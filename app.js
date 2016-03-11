@@ -40,20 +40,15 @@ app.get('/', function(req, res) {
 app.use('/routers', routers);
 
 app.use(function(req, res, next) {
-    console.log(req.session.user)
-    console.log(req.url)
+    // console.log(req.session.user)
+    // console.log(req.url)
     if (!req.session.user) {
         if (req.url == "/login") {
-            console.log("do")
             next(); //如果请求的地址是登录则通过，进行下一个请求
         } else {
-            console.log("do1")
-
             res.redirect('/login');
         }
     } else if (req.session.user) {
-        console.log("do2")
-
         next();
     }
 });

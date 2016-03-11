@@ -15,8 +15,8 @@ router.get("/number_list/new", function(req, res) {
 })
 router.post("/number_list/new", function(req, res) {
     // res.render("admin/number_list_new")
-    var data = req.body.numbers;
-    if (!data) {
+    var numbers = req.body.numbers;
+    if (!numbers) {
         res.send({
             code: 2000,
             msg: "号码不能为空!"
@@ -25,17 +25,19 @@ router.post("/number_list/new", function(req, res) {
     mongoose.connect('mongodb://localhost/herun');
     var db = mongoose.connection;
     db.on('error', console.error.bind(console, '连接mongo数据库错误:'));
+    // db.createCollection("numbers",{max:2024})
     db.once('open', function() {
-        var arr = data.split(/\n+/);
+        var arr = numbers.split(/\n+/)||[];
         var errs = [];
-        for (var i = 0, l = arr; i < l; i++) {
+        for (var i = 0, l = arr.length; i < l; i++) {
             // Num.findOne({ serial_number: arr[i] }, function(err, doc) {
                 // if (err) {
                 //     errs.push(arr[i] + err);
                 //     return false;
                 // }
                 // if (!doc) {
-                    var data = new Article({
+                  // console.log(arr[i])
+                    var data = new Num({
                         serial_number: arr[i]
                     });
                     data.save(function(err, doc) {
