@@ -87,19 +87,31 @@
 <script type="text/javascript">
     $("form").submit(function(){
         var v=$("textarea").val();
-        console.log(v)
+        // console.log(v)
         if(!v){
             alert("号码不能为空!");
             return false;
         }
-        // $.ajax({
-        //     url:"",
-        //     type:"post",
-        //     data:data,
-        //     success:function(){
-
-        //     }
-        // })
+        var btn=$("#submit");
+        if(btn.val === "保存中.."){
+            return false;
+        }
+        btn.val("保存中..");
+        var data=v;
+        $.ajax({
+            url:"/admin/number_list/new",
+            type:"post",
+            data:{numbers:v},
+            success:function(res){
+                console.log(res)
+            },
+            error:function(res){
+                alert("")
+            },
+            complete:function(){
+                btn.val("保存");
+            }
+        })
         return false;
     })
 </script>
