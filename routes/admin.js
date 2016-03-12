@@ -27,36 +27,62 @@ router.post("/number_list/new", function(req, res) {
     db.on('error', console.error.bind(console, '连接mongo数据库错误:'));
     // db.createCollection("numbers",{max:2024})
     db.once('open', function() {
-        var arr = numbers.split(/\n+/)||[];
+        var arr = numbers.split(/\n+/) || [];
         var errs = [];
+        var data = [];
         for (var i = 0, l = arr.length; i < l; i++) {
-            // Num.findOne({ serial_number: arr[i] }, function(err, doc) {
-                // if (err) {
-                //     errs.push(arr[i] + err);
-                //     return false;
-                // }
-                // if (!doc) {
-                  // console.log(arr[i])
-                    var data = new Num({
-                        serial_number: arr[i]
-                    });
-                    data.save(function(err, doc) {
-                      if(err){
-                        errs.push(arr[i] + err);
-                        return false;
-                      }
-                    })
-                // }
-
-
-            // })
-
+            if (arr[i]) {
+                data.push({
+                    serial_number: arr[i]
+                })
+            }
         }
-        res.send({
-          code:1000,
-          msg:"处理完成",
-          errs:errs
-        })
+        Num.create(data, function(err, docs) {
+                if (err) {
+                    errs.push(err);
+                }
+                res.send({
+                    code: 1000,
+                    msg: "处理完成",
+                    errs: errs
+                })
+                db.close();
+            })
+            // var nums =new Num(data);
+
+        // for (var i = 0, l = arr.length; i < l; i++) {
+        // Num.findOne({ serial_number: arr[i] }, function(err, doc) {
+        // if (err) {
+        //     errs.push(arr[i] + err);
+        //     return false;
+        // }
+        // if (!doc) {
+        // console.log(arr[i])
+
+        // nums.save(function(err, doc) {
+        //   if(err){
+        //     errs.push(arr[i] + err);
+        //     return false;
+        //   }
+        //   res.send({
+        //     code:1000,
+        //     msg:"处理完成",
+        //     errs:errs
+        //   })
+        //   db.close();
+        // })
+        // }
+
+
+        // })
+
+        // }
+        // res.send({
+        //   code:1000,
+        //   msg:"处理完成",
+        //   errs:errs
+        // })
+        // db.close();
         //循环结束
 
 
