@@ -9,11 +9,30 @@
       <div class="yanzheng">
         <header class="title">SEXY SECRET</header>
         <form>
-        <div><input id="number" type="text" value="" placeholder="请输入要查询的序号" /></div>
+        <div><input id="number" name="number" type="text" value="" placeholder="请输入要查询的序号" /></div>
         <div><input class="submit" type="submit" value="开始查询" /></div>
         </form>
       </div>
+
+      <div class="modal fade">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+              <h4 class="modal-title">提示信息</h4>
+            </div>
+            <div class="modal-body">
+              
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+            </div>
+          </div><!-- /.modal-content -->
+        </div><!-- /.modal-dialog -->
+      </div><!-- /.modal -->
+
     <script type="text/javascript" src="/zepto/zepto.min.js"></script>
+    <script type="text/javascript" src="/lib/moment/moment.js"></script>
     <script type="text/javascript">
       $("form").submit(function(){
         var v=$("#number").val(),
@@ -29,10 +48,24 @@
         }
         $.ajax({
           url:"/routers/index",
-          data:{value:v},
+          data:{number:v},
           type:"post",
           success:function(res){
             console.log(res)
+            if(res.code===1000){
+              if(res.data){
+                var str="经系统验证,你所查询的防伪编码已被查询过.第一次查询的时间为:"+moment(res.data.create_time)+"  IP:"+res.data.ip;
+                alert(str)
+              }else{
+                // $(".modal-body").html("")
+                alert("经系统验证,你所查询的防伪编码没有被查询过.")
+              }
+              // $('#myModal').modal()
+
+            }else{
+              $(".modal-body").html(res.msg)
+              // alert(res.msg)
+            }
           },
           complete:function(){
             $(".submit").val("开始查询")

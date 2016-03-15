@@ -9,6 +9,12 @@ var common = {
         md5.update(content);
         var d = md5.digest("hex");
         return d;
+    },
+    getClientIp: function(req) {
+        return req.headers['x-forwarded-for'] ||
+            req.connection.remoteAddress ||
+            req.socket.remoteAddress ||
+            req.connection.socket.remoteAddress;
     }
 }
 

@@ -19,7 +19,6 @@ router.get("/", function(req, res) {
 })
 router.post("/", function(req, res) {
 
-    console.log(req.body);
     var u = req.body.username,
         p = req.body.password;
     if (!u || !p) {
