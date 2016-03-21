@@ -103,10 +103,17 @@
             type:"post",
             data:{numbers:v},
             success:function(res){
-                console.log(res)
+                if(res.errs.length){
+                    alert("错误信息:"+res.errs.join(","));
+                }else if(res.code===1000){
+                    alert("添加成功!")
+                }else{
+                    alert(res.msg)
+                }
+                
             },
             error:function(res){
-                alert("")
+                alert("添加失败,请重试!")
             },
             complete:function(){
                 btn.val("保存");

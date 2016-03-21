@@ -1,6 +1,7 @@
 var express = require("express");
 var router = express.Router();
 var mongoose = require("mongoose");
+var moment=require("../public/lib/moment/moment")
 var Num = require("../model/num");
 
 router.get("/", function(req, res) {
@@ -8,7 +9,33 @@ router.get("/", function(req, res) {
     res.render("admin/index")
 })
 router.get("/number_list", function(req, res) {
-    res.render("admin/number_list")
+    mongoose.connect('mongodb://localhost/herun');
+    var db = mongoose.connection;
+    db.on('error', console.error.bind(console, '连接mongo数据库错误:'));
+    // db.createCollection("numbers",{max:2024})
+    db.once('open', function(err) {
+        if(err){
+            res.send({
+                code:5000,
+                msg:"服务器故障!"
+            })
+            return ;
+        }
+        Num.find(function(err,doc){
+            if(err){
+                res.send({
+                    code:2000,
+                    msg:"查询错误"
+                })
+            }
+            for(var i=0;i<doc.length;i++){
+                doc[i].for_create_time=moment(doc[i].create_time).format("YYYY-MM-DD HH:mm:ss")
+            }
+            console.log(moment)
+            res.render("admin/number_list",{docs:doc})
+            db.close()
+        })
+    })
 })
 router.get("/number_list/new", function(req, res) {
     res.render("admin/number_list_new")
