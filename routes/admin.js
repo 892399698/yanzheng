@@ -6,7 +6,8 @@ var Num = require("../model/num");
 
 router.get("/", function(req, res) {
     // res.send({ code: 1000 })
-    res.render("admin/index")
+    // res.render("admin/index")
+    res.redirect('/admin/number_list')
 })
 router.get("/number_list", function(req, res) {
     mongoose.connect('mongodb://localhost/herun');
@@ -31,8 +32,8 @@ router.get("/number_list", function(req, res) {
             for(var i=0;i<doc.length;i++){
                 doc[i].for_create_time=moment(doc[i].create_time).format("YYYY-MM-DD HH:mm:ss")
             }
-            console.log(moment)
-            res.render("admin/number_list",{docs:doc})
+            // console.log(moment)
+            res.render("admin/number_list",{docs:doc.reverse()})
             db.close()
         })
     })
@@ -111,10 +112,12 @@ router.post("/number_list/new", function(req, res) {
                                     // return false;
                                 }
                                 if (k == l) {
+
                                     res.send({
                                         code: 1000,
                                         msg: "处理完成",
-                                        errs: errs
+                                        errs: errs,
+                                        doc:doc
                                     })
                                     db.close();
                                 }

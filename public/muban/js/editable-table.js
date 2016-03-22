@@ -15,26 +15,46 @@ var EditableTable = function () {
                 oTable.fnDraw();
             }
 
-            function editRow(oTable, nRow) {
+            function editRow(oTable, nRow,disabled) {
                 var aData = oTable.fnGetData(nRow);
                 var jqTds = $('>td', nRow);
-                jqTds[0].innerHTML = '<input type="text" class="form-control small" value="' + aData[0] + '">';
-                jqTds[1].innerHTML = '<input type="text" class="form-control small" value="' + aData[1] + '">';
-                jqTds[2].innerHTML = '<input type="text" class="form-control small" value="' + aData[2] + '">';
-                jqTds[3].innerHTML = '<input type="text" class="form-control small" value="' + aData[3] + '">';
+                jqTds[0].innerHTML = '<input type="text" disabled class="form-control small" value="' + aData[0] + '">';
+                jqTds[1].innerHTML = '<input type="number" class="form-control small" value="' + aData[1] + '">';
+                jqTds[2].innerHTML = '<input type="text" disabled class="form-control small" value="' + aData[2] + '">';
+                jqTds[3].innerHTML = '<input type="text" disabled class="form-control small" value="' + aData[3] + '">';
                 jqTds[4].innerHTML = '<a class="edit" href="">保存</a>';
                 jqTds[5].innerHTML = '<a class="cancel" href="">取消</a>';
             }
 
             function saveRow(oTable, nRow) {
                 var jqInputs = $('input', nRow);
-                oTable.fnUpdate(jqInputs[0].value, nRow, 0, false);
-                oTable.fnUpdate(jqInputs[1].value, nRow, 1, false);
-                oTable.fnUpdate(jqInputs[2].value, nRow, 2, false);
-                oTable.fnUpdate(jqInputs[3].value, nRow, 3, false);
-                oTable.fnUpdate('<a class="edit" href="">编辑</a>', nRow, 4, false);
-                oTable.fnUpdate('<a class="delete" href="">删除</a>', nRow, 5, false);
-                oTable.fnDraw();
+                
+                $.ajax({
+                    url:"/admin/number_list/new",
+                    data:{numbers:jqInputs[1].value},
+                    type:"post",
+                    success:function(res){
+                        if(res.code==1000){
+                            // oTable.fnUpdate(jqInputs[0].value, nRow, 0, false);
+                            // oTable.fnUpdate(jqInputs[1].value, nRow, 1, false);
+                            // oTable.fnUpdate(jqInputs[2].value, nRow, 2, false);
+                            // oTable.fnUpdate(jqInputs[3].value, nRow, 3, false);
+                            oTable.fnUpdate(res.doc && res.doc._id, nRow, 0, false);
+                            oTable.fnUpdate(jqInputs[1].value, nRow, 1, false);
+                            oTable.fnUpdate(res.doc &&moment(res.doc.create_time).format("YYYY-MM-DD HH:mm:ss"), nRow, 2, false);
+                            oTable.fnUpdate(0, nRow, 3, false);
+                            oTable.fnUpdate('<a class="edit" href="">编辑</a>', nRow, 4, false);
+                            oTable.fnUpdate('<a class="delete" href="">删除</a>', nRow, 5, false);
+                            oTable.fnDraw();
+                        }else{
+                            alert("保存失败,请重试!")
+                        }
+
+                    },
+                    error:function(){
+                        alert("保存失败,请重试!")
+                    }
+                })
             }
 
             function cancelEditRow(oTable, nRow) {
@@ -123,7 +143,8 @@ var EditableTable = function () {
                     /* Editing this row and want to save it */
                     saveRow(oTable, nEditing);
                     nEditing = null;
-                    alert("Updated! Do not forget to do some ajax to sync with backend :)");
+
+                    // alert("Updated! Do not forget to do some ajax to sync with backend :)");
                 } else {
                     /* No edit in progress - let's start one */
                     editRow(oTable, nRow);
