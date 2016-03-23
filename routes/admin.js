@@ -38,6 +38,73 @@ router.get("/number_list", function(req, res) {
         })
     })
 })
+//编辑
+router.post("/number_list/edit", function(req, res) {
+    mongoose.connect('mongodb://localhost/herun');
+    var db = mongoose.connection;
+    db.on('error', console.error.bind(console, '连接mongo数据库错误:'));
+    db.once('open', function(err) {
+        if(err){
+            res.send({
+                code:5000,
+                msg:"服务器故障!"
+            })
+            return ;
+        }
+        console.log(req.body)
+        var id=req.body.id;
+        var num=req.body.num;
+        if(!id || !num){
+            res.send({
+                code:2000,
+                msg:"id或号码不能为空!"
+            })
+        }
+        Num.findOne({
+            serial_number:num
+        },function(err,doc){
+            if(err){
+                res.send({
+                    code:2000,
+                    msg:"查询同号码错误"
+                })
+            }
+            if(doc){
+                res.send({
+                    code:2000,
+                    msg:"号码已经存在!"
+                })
+                db.close()
+            }else{
+                var nums = new Num({
+                    _id:id,
+                    serial_number: num
+                });
+                nums.save(function(err,doc){
+                    if(err){
+                        res.send({
+                            code:2000,
+                            msg:"保存失败,请重试!"
+                        })
+                    }else{
+                        res.send({
+                            code:1000,
+                            msg:"保存成功!"
+                        })
+                    }
+                    
+                    db.close()
+
+                })
+            }
+            // for(var i=0;i<doc.length;i++){
+            //     doc[i].for_create_time=moment(doc[i].create_time).format("YYYY-MM-DD HH:mm:ss")
+            // }
+            // res.render("admin/number_list",{docs:doc.reverse()})
+        })
+    })
+})
+
 router.get("/number_list/new", function(req, res) {
     res.render("admin/number_list_new")
 })
@@ -58,27 +125,7 @@ router.post("/number_list/new", function(req, res) {
         var arr = numbers.split(/\n+/) || [];
         var errs = [];
         var data = [];
-        // for (var i = 0, l = arr.length; i < l; i++) {
-        //     if (arr[i]) {
-        //         data.push({
-        //             serial_number: arr[i]
-        //         })
-        //     }
-        // }
-        // Num.create(data, function(err, docs) {
-        //         if (err) {
-        //             errs.push(err);
-        //         }
-        //         res.send({
-        //             code: 1000,
-        //             msg: "处理完成",
-        //             errs: errs
-        //         })
-        //         db.close();
-        //     })
 
-
-        // var nums =new Num(data);
         var k = 0;
         for (var i = 0, l = arr.length; i < l; i++) {
 
@@ -179,10 +226,5 @@ router.post("/number_list/new", function(req, res) {
 
     })
 
-
-    // res.send({
-    //     code: 1000,
-    //     msg: arr
-    // })
 })
 module.exports = router

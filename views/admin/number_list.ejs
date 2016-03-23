@@ -135,10 +135,10 @@
                         <%  docs.forEach(function(doc){ %>
                             <tr class="">
                                 <td><%= doc._id %></td>
-                                <td><%= doc.serial_number %></td>
+                                <td class="num"><span><%= doc.serial_number %></span><input type="text" class="hide" value=<%=doc.serial_number%>></td>
                                 <td><%= doc.for_create_time %></td>
                                 <td class="center">0</td>
-                                <td><a class="edit" href="javascript:;">编辑</a></td>
+                                <td><a cp_id=<%= doc._id %> class="edit" href="javascript:;">编辑</a></td>
                                 <td><a class="delete" href="javascript:;">删除</a></td>
                             </tr>
                         <%})%>
@@ -186,6 +186,47 @@
 
 <script>
     jQuery(document).ready(function() {
+        $(".edit").click(function(){
+            var t=$(this);
+            var text=t.text();
+            if(text=="保存"){
+                var p=t.parent().parent().find(".num")
+                var v=p.find("input").val();
+                var id=t.attr("cp_id");
+                if(t.hasClass("ajaxing")){
+                    return false;
+                }else{
+                    t.addClass("ajaxing")
+                }
+                $.ajax({
+                    url:"/admin/number_list/edit",
+                    data:{
+                        id:id,
+                        num:v
+                    },
+                    type:"post",
+                    success:function(res){
+                        if(res.code===1000){
+                            p.find("span").text(v).removeClass("hide");
+                            p.find("input").addClass("hide")
+                            t.text("编辑");
+                        }else{
+                            alert(res.msg)
+                        }
+                    },
+                    complete:function(){
+                        t.removeClass("ajaxing")
+                    }
+                })
+                
+            }else{
+                var p=t.parent().parent().find(".num")
+                p.find("span").addClass("hide");
+                p.find("input").removeClass("hide")
+                t.text("保存")
+            }
+            
+        })
         // EditableTable.init();
     });
 </script>
