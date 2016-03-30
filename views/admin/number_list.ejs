@@ -116,10 +116,14 @@
                 <div class="row clearfix">
                     <div class="col-lg-6 pull-right">
                         <div class="dataTables_filter" id="editable-sample_filter">
-                            <label>搜索: <input type="text" aria-controls="editable-sample" class="form-control medium"></label>
-                            </div>
+                            <form action="/admin/number_list/search">
+                                <label>搜索: <input type="text" aria-controls="editable-sample" class="form-control medium"></label>
+                                <input type="submit" class="btn btn-success" />
+                                </div>
+                            </form>
                     </div>
                 </div>
+                <% if(docs && docs.length){ %>
                     <table class="table table-striped table-hover table-bordered" id="editable-sample">
                         <thead>
                         <tr>
@@ -144,23 +148,45 @@
                         <%})%>
                         </tbody>
                     </table>
+                    <!-- 分页 -->
                     <div class="row clearfix">
                         <div class="col-lg-6">
                             <div class="dataTables_info">
-                            共3页11条记录</div>
+                            共<%= meta.total_pages %>页<%= meta.total_records %>条记录</div>
                         </div>
                         <div class="col-lg-6">
                             <div class="dataTables_paginate paging_bootstrap pagination">
                                 <ul>
-                                    <li class="prev disabled"><a href="#">← 上一页</a></li>
-                                    <li class="active"><a href="#">1</a></li>
-                                    <li><a href="#">2</a></li>
-                                    <li><a href="#">3</a></li>
-                                    <li class="next"><a href="#">下一页 → </a></li>
+                                <% if(meta.page>1){ %>
+                                    <li class="prev"><a href="/admin/number_list?page=<%= (meta.page-1) %>">← 上一页</a></li>
+                                <% }else{ %>
+                                    <li class="prev disabled"><a href="javascript:void(0)">← 上一页</a></li>
+                                <% } %>
+
+                                    <% for(var i=1; i<=meta.total_pages; i++){ %>
+                                        <% if(i==meta.page){ %>
+                                            <li class="active"><a href="/admin/number_list?page=<%= i %>"><%= i %></a></li>
+                                            
+                                        <% }else{ %>
+                                            <li><a href="/admin/number_list?page=<%= i %>"><%= i %></a></li>
+
+                                        <% } %>
+                                    <!-- <li><a href="#">2</a></li> -->
+                                    <!-- <li><a href="#">3</a></li> -->
+                                    <% } %>
+                                    <% if(meta.page<meta.total_pages){ %>
+                                        <li class="next"><a href="/admin/number_list?page=<%= (meta.page+1) %>">下一页 → </a></li>
+                                    <% }else{ %>
+                                        <li class="next disabled"><a href="javascript:void(0)">下一页 → </a></li>
+                                    <% } %>
+                                    
                                 </ul>
                             </div>
                         </div>
                     </div>
+                    <!-- 分页 -->
+
+                    <% } %>
                 </div>
                 </div>
                 </section>

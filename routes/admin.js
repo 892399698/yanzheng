@@ -1,7 +1,7 @@
 var express = require("express");
 var router = express.Router();
 var mongoose = require("mongoose");
-var moment=require("../public/lib/moment/moment")
+var moment = require("../public/lib/moment/moment")
 var Num = require("../model/num");
 
 router.get("/", function(req, res) {
@@ -10,143 +10,176 @@ router.get("/", function(req, res) {
     res.redirect('/admin/number_list')
 })
 router.get("/number_list", function(req, res) {
-    mongoose.connect('mongodb://localhost/herun');
-    var db = mongoose.connection;
-    db.on('error', console.error.bind(console, '连接mongo数据库错误:'));
-    // db.createCollection("numbers",{max:2024})
-    db.once('open', function(err) {
-        if(err){
-            res.send({
-                code:5000,
-                msg:"服务器故障!"
-            })
-            return ;
-        }
-        Num.find(function(err,doc){
-            if(err){
+        mongoose.connect('mongodb://localhost/herun');
+        var db = mongoose.connection;
+        db.on('error', console.error.bind(console, '连接mongo数据库错误:'));
+        // db.createCollection("numbers",{max:2024})
+        db.once('open', function(err) {
+            if (err) {
                 res.send({
-                    code:2000,
-                    msg:"查询错误"
+                    code: 5000,
+                    msg: "服务器故障!"
                 })
+                return;
             }
-            for(var i=0;i<doc.length;i++){
-                doc[i].for_create_time=moment(doc[i].create_time).format("YYYY-MM-DD HH:mm:ss")
+            var page_size = 30;
+            var page = req.body.page || 1;
+            var limit = page * page_size;
+            var skip = (page - 1) * page_size
+            var meta = {
+                page: page,
+                page_size: page_size,
             }
-            // console.log(moment)
-            res.render("admin/number_list",{docs:doc.reverse()})
-            db.close()
-        })
-    })
-})
-//编辑
-router.post("/number_list/edit", function(req, res) {
-    mongoose.connect('mongodb://localhost/herun');
-    var db = mongoose.connection;
-    db.on('error', console.error.bind(console, '连接mongo数据库错误:'));
-    db.once('open', function(err) {
-        if(err){
-            res.send({
-                code:5000,
-                msg:"服务器故障!"
-            })
-            return ;
-        }
-        console.log(req.body)
-        var id=req.body.id;
-        var num=req.body.num;
-        if(!id || !num){
-            res.send({
-                code:2000,
-                msg:"id或号码不能为空!"
-            })
-        }
-        Num.findOne({
-            serial_number:num
-        },function(err,doc){
-            if(err){
-                res.send({
-                    code:2000,
-                    msg:"查询同号码错误"
-                })
-            }
-            if(doc){
-                res.send({
-                    code:2000,
-                    msg:"号码已经存在!"
-                })
-                db.close()
-            }else{
-                var nums = new Num({
-                    _id:id,
-                    serial_number: num
-                });
-                nums.save(function(err,doc){
-                    if(err){
+            Num.count(function(err, count) {
+                if (err) {
+                    res.send({
+                        code: 2000,
+                        msg: "获取总记录数失败"
+                    })
+
+                }
+                meta.total_records = count;
+                meta.total_pages= Math.ceil(count/page_size);
+                var query = Num.find({}).skip(skip).limit(limit).exec(function(err, doc) {
+                    if (err) {
                         res.send({
-                            code:2000,
-                            msg:"保存失败,请重试!"
-                        })
-                    }else{
-                        res.send({
-                            code:1000,
-                            msg:"保存成功!"
+                            code: 2000,
+                            msg: "查询失败"
                         })
                     }
-                    
+                    for (var i = 0; i < doc.length; i++) {
+                        doc[i].for_create_time = moment(doc[i].create_time).format("YYYY-MM-DD HH:mm:ss")
+                    }
+                    res.render("admin/number_list", { docs: doc.reverse(), meta: meta })
                     db.close()
-
                 })
-            }
-            // for(var i=0;i<doc.length;i++){
-            //     doc[i].for_create_time=moment(doc[i].create_time).format("YYYY-MM-DD HH:mm:ss")
-            // }
-            // res.render("admin/number_list",{docs:doc.reverse()})
+            })
+
+            // Num.find(function(err,doc){
+            //     if(err){
+            //         res.send({
+            //             code:2000,
+            //             msg:"查询错误"
+            //         })
+            //     }
+            //     for(var i=0;i<doc.length;i++){
+            //         doc[i].for_create_time=moment(doc[i].create_time).format("YYYY-MM-DD HH:mm:ss")
+            //     }
+            //     // console.log(moment)
+            //     res.render("admin/number_list",{docs:doc.reverse()})
+            //     db.close()
+            // })
         })
     })
-})
-//删除
+    //编辑
+router.post("/number_list/edit", function(req, res) {
+        mongoose.connect('mongodb://localhost/herun');
+        var db = mongoose.connection;
+        db.on('error', console.error.bind(console, '连接mongo数据库错误:'));
+        db.once('open', function(err) {
+            if (err) {
+                res.send({
+                    code: 5000,
+                    msg: "服务器故障!"
+                })
+                return;
+            }
+            console.log(req.body)
+            var id = req.body.id;
+            var num = req.body.num;
+            if (!id || !num) {
+                res.send({
+                    code: 2000,
+                    msg: "id或号码不能为空!"
+                })
+            }
+            Num.findOne({
+                serial_number: num
+            }, function(err, doc) {
+                if (err) {
+                    res.send({
+                        code: 2000,
+                        msg: "查询同号码错误"
+                    })
+                }
+                if (doc) {
+                    res.send({
+                        code: 2000,
+                        msg: "号码已经存在!"
+                    })
+                    db.close()
+                } else {
+                    var nums = new Num({
+                        _id: id,
+                        serial_number: num
+                    });
+                    nums.save(function(err, doc) {
+                        if (err) {
+                            res.send({
+                                code: 2000,
+                                msg: "保存失败,请重试!"
+                            })
+                        } else {
+                            res.send({
+                                code: 1000,
+                                msg: "保存成功!"
+                            })
+                        }
+
+                        db.close()
+
+                    })
+                }
+                // for(var i=0;i<doc.length;i++){
+                //     doc[i].for_create_time=moment(doc[i].create_time).format("YYYY-MM-DD HH:mm:ss")
+                // }
+                // res.render("admin/number_list",{docs:doc.reverse()})
+            })
+        })
+    })
+    //删除
 router.post("/number_list/delete", function(req, res) {
     mongoose.connect('mongodb://localhost/herun');
     var db = mongoose.connection;
     db.on('error', console.error.bind(console, '连接mongo数据库错误:'));
     db.once('open', function(err) {
-        if(err){
+        if (err) {
             res.send({
-                code:5000,
-                msg:"服务器故障!"
+                code: 5000,
+                msg: "服务器故障!"
             })
-            return ;
+            return;
         }
         console.log(req.body)
-        var id=req.body.id;
+        var id = req.body.id;
         // var num=req.body.num;
-        if(!id){
+        if (!id) {
             res.send({
-                code:2000,
-                msg:"id不能为空!"
+                code: 2000,
+                msg: "id不能为空!"
             })
         }
         Num.remove({
-            _id:id
-        },function(err,doc){
-            if(err){
+            _id: id
+        }, function(err, doc) {
+            if (err) {
                 res.send({
-                    code:2000,
-                    msg:"删除失败"
+                    code: 2000,
+                    msg: "删除失败"
                 })
             }
             res.send({
-                code:1000,
-                msg:"删除成功!"
+                code: 1000,
+                msg: "删除成功!"
             })
             db.close()
-            // if(doc){
-            //     res.send({
-            //         code:2000,
-            //         msg:"号码已经存在!"
-            //     })
-            //     db.close()
-            // }else{
+                // if(doc){
+                //     res.send({
+                //         code:2000,
+                //         msg:"号码已经存在!"
+                //     })
+                //     db.close()
+                // }else{
                 // var nums = new Num({
                 //     _id:id,
                 //     serial_number: num
@@ -163,12 +196,12 @@ router.post("/number_list/delete", function(req, res) {
                 //             msg:"保存成功!"
                 //         })
                 //     }
-                    
-                //     db.close()
 
-                // })
+            //     db.close()
+
+            // })
             // }
-            
+
         })
     })
 })
@@ -199,7 +232,7 @@ router.post("/number_list/new", function(req, res) {
             (function(arri) {
                 console.log(arri)
                 Num.findOne({ serial_number: arri }, function(err, doc) {
-                    
+
                     var nums = new Num({
                         serial_number: arri
                     });
@@ -217,7 +250,7 @@ router.post("/number_list/new", function(req, res) {
                         // return false;
                     } else {
                         if (!doc) {
-                            console.log("doc %s",doc)
+                            console.log("doc %s", doc)
                             console.log(nums)
                             nums.save(function(err, doc) {
                                 k++;
@@ -231,7 +264,7 @@ router.post("/number_list/new", function(req, res) {
                                         code: 1000,
                                         msg: "处理完成",
                                         errs: errs,
-                                        doc:doc
+                                        doc: doc
                                     })
                                     db.close();
                                 }
