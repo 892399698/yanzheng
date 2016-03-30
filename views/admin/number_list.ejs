@@ -139,7 +139,7 @@
                                 <td><%= doc.for_create_time %></td>
                                 <td class="center">0</td>
                                 <td><a cp_id=<%= doc._id %> class="edit" href="javascript:;">编辑</a></td>
-                                <td><a class="delete" href="javascript:;">删除</a></td>
+                                <td><a cp_id=<%= doc._id %> class="delete" href="javascript:;">删除</a></td>
                             </tr>
                         <%})%>
                         </tbody>
@@ -209,7 +209,7 @@
                         if(res.code===1000){
                             p.find("span").text(v).removeClass("hide");
                             p.find("input").addClass("hide")
-                            t.text("编辑");
+                            t.text("编辑").parent().next().find("a").text("删除");
                         }else{
                             alert(res.msg)
                         }
@@ -222,8 +222,54 @@
             }else{
                 var p=t.parent().parent().find(".num")
                 p.find("span").addClass("hide");
-                p.find("input").removeClass("hide")
-                t.text("保存")
+                p.find("input").removeClass("hide");
+                t.text("保存").parent().next().find("a").text("取消");
+            }
+            
+        })
+        //删除
+        $("#editable-sample").on("click",".delete",function(){
+            var t=$(this);
+            var text=t.text();
+            if(text=="删除"){
+                var p=t.parent().parent().find(".num")
+                var v=p.find("input").val();
+                var id=t.attr("cp_id");
+                if(t.hasClass("ajaxing")){
+                    return false;
+                }else{
+                    t.addClass("ajaxing")
+                }
+                if(confirm("确定删除么?")){
+                    $.ajax({
+                        url:"/admin/number_list/delete",
+                        data:{
+                            id:id,
+                        },
+                        type:"post",
+                        success:function(res){
+                            if(res.code===1000){
+                                // p.find("span").text(v).removeClass("hide");
+                                // p.find("input").addClass("hide")
+                                // t.text("编辑").parent().next().find("a").text("删除");
+                                t.parent().parent().remove();
+                            }else{
+                                alert(res.msg)
+                            }
+                        },
+                        complete:function(){
+                            t.removeClass("ajaxing")
+                        }
+                    })
+                }else{
+                    t.removeClass("ajaxing")
+                }
+                
+            }else{
+                var p=t.parent().parent().find(".num")
+                p.find("span").text(v).removeClass("hide");
+                p.find("input").addClass("hide")
+                t.text("删除").parent().prev().find("a").text("编辑")
             }
             
         })

@@ -104,7 +104,74 @@ router.post("/number_list/edit", function(req, res) {
         })
     })
 })
+//删除
+router.post("/number_list/delete", function(req, res) {
+    mongoose.connect('mongodb://localhost/herun');
+    var db = mongoose.connection;
+    db.on('error', console.error.bind(console, '连接mongo数据库错误:'));
+    db.once('open', function(err) {
+        if(err){
+            res.send({
+                code:5000,
+                msg:"服务器故障!"
+            })
+            return ;
+        }
+        console.log(req.body)
+        var id=req.body.id;
+        // var num=req.body.num;
+        if(!id){
+            res.send({
+                code:2000,
+                msg:"id不能为空!"
+            })
+        }
+        Num.remove({
+            _id:id
+        },function(err,doc){
+            if(err){
+                res.send({
+                    code:2000,
+                    msg:"删除失败"
+                })
+            }
+            res.send({
+                code:1000,
+                msg:"删除成功!"
+            })
+            db.close()
+            // if(doc){
+            //     res.send({
+            //         code:2000,
+            //         msg:"号码已经存在!"
+            //     })
+            //     db.close()
+            // }else{
+                // var nums = new Num({
+                //     _id:id,
+                //     serial_number: num
+                // });
+                // nums.save(function(err,doc){
+                //     if(err){
+                //         res.send({
+                //             code:2000,
+                //             msg:"保存失败,请重试!"
+                //         })
+                //     }else{
+                //         res.send({
+                //             code:1000,
+                //             msg:"保存成功!"
+                //         })
+                //     }
+                    
+                //     db.close()
 
+                // })
+            // }
+            
+        })
+    })
+})
 router.get("/number_list/new", function(req, res) {
     res.render("admin/number_list_new")
 })
