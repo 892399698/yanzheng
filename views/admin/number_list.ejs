@@ -85,7 +85,12 @@
                 <div class="col-sm-12">
                 <section class="panel">
                 <header class="panel-heading">
+                <% if("undefined" == typeof keyword){ %>
                     号码列表
+                <% }else{ %>
+                    搜索关键字  <%= keyword %>  结果列表
+                <% } %>
+                    
                     <!-- <span class="tools pull-right">
                         <a href="javascript:;" class="fa fa-chevron-down"></a>
                         <a href="javascript:;" class="fa fa-times"></a>
@@ -115,10 +120,15 @@
                 <div class="space15"></div>
                 <div class="row clearfix">
                     <div class="col-lg-6 pull-right">
-                        <div class="dataTables_filter" id="editable-sample_filter">
-                            <form action="/admin/number_list/search">
-                                <label>搜索: <input type="text" aria-controls="editable-sample" class="form-control medium"></label>
-                                <input type="submit" class="btn btn-success" />
+                        <div class="form-group clearfix" id="editable-sample_filter">
+                            <form class="form-horizontal" action="/admin/number_list/search">
+                                <label class="col-md-2 control-label">搜索: </label>
+                                <div class="col-md-8">
+                                    <input type="text" name="keyword" aria-controls="editable-sample" class="form-control medium">
+                                </div>
+                                <div class="col-md-2">
+                                    <input type="submit" value="提交" class="btn btn-success" />
+                                </div>
                                 </div>
                             </form>
                     </div>

@@ -23,7 +23,7 @@ router.get("/number_list", function(req, res) {
                 return;
             }
             var page_size = 30;
-            var page = req.body.page || 1;
+            var page = req.query.page || 1;
             var limit = page * page_size;
             var skip = (page - 1) * page_size
             var meta = {
@@ -55,20 +55,66 @@ router.get("/number_list", function(req, res) {
                 })
             })
 
-            // Num.find(function(err,doc){
-            //     if(err){
-            //         res.send({
-            //             code:2000,
-            //             msg:"查询错误"
-            //         })
-            //     }
-            //     for(var i=0;i<doc.length;i++){
-            //         doc[i].for_create_time=moment(doc[i].create_time).format("YYYY-MM-DD HH:mm:ss")
-            //     }
-            //     // console.log(moment)
-            //     res.render("admin/number_list",{docs:doc.reverse()})
-            //     db.close()
-            // })
+        })
+    })
+router.get("/number_list/search", function(req, res) {
+        mongoose.connect('mongodb://localhost/herun');
+        var db = mongoose.connection;
+        db.on('error', console.error.bind(console, '连接mongo数据库错误:'));
+        db.once('open', function(err) {
+            if (err) {
+                res.send({
+                    code: 5000,
+                    msg: "服务器故障!"
+                })
+                return;
+            }
+            var keyword=req.query.keyword;
+            if(!keyword){
+                res.send({
+                    code:2000,
+                    msg:"搜索关键字不能为空!"
+                })
+            }
+            var page_size = 30;
+            var page = req.query.page || 1;
+            var limit = page * page_size;
+            var skip = (page - 1) * page_size
+            var meta = {
+                page: page,
+                page_size: page_size,
+            }
+            Num.count(function(err, count) {
+                if (err) {
+                    res.send({
+                        code: 2000,
+                        msg: "获取总记录数失败"
+                    })
+
+                }
+                meta.total_records = count;
+                meta.total_pages= Math.ceil(count/page_size);
+                if(!/^\d+$/.test(keyword)){
+                    res.send({
+                        code:2000,
+                        msg:"关键字只能为数字"
+                    })
+                }
+                var query = Num.find({serial_number:new RegExp(keyword)}).skip(skip).limit(limit).exec(function(err, doc) {
+                    if (err) {
+                        res.send({
+                            code: 2000,
+                            msg: "查询失败"
+                        })
+                    }
+                    for (var i = 0; i < doc.length; i++) {
+                        doc[i].for_create_time = moment(doc[i].create_time).format("YYYY-MM-DD HH:mm:ss")
+                    }
+                    res.render("admin/number_list", { docs: doc.reverse(), meta: meta,keyword:keyword })
+                    db.close()
+                })
+            })
+
         })
     })
     //编辑
