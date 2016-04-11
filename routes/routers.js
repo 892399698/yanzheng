@@ -58,23 +58,27 @@ router.post("/:path", function(req, res) {
                         ip:ip,
                         num_id:id
                     });
+                    console.log(record)
                     record.save(function(err){
-                        
-                    })
-                    if(docs && docs.length){
-                        res.send({
-                            code:1000,
-                            msg:"查询成功!",
-                            data:docs[docs.length-1]
-                        })
-                    }else{
-                        res.send({
-                            code:1000,
-                            msg:"查询成功!"
-                        })
+                        if(err){
+                            console.log(err)
+                        }
+                        if(docs && docs.length){
+                            res.send({
+                                code:1000,
+                                msg:"查询成功!",
+                                data:docs[docs.length-1]
+                            })
+                        }else{
+                            res.send({
+                                code:1000,
+                                msg:"查询成功!"
+                            })
 
-                    }
-                    db.close();
+                        }
+                        db.close();
+                    })
+                    
                     
 
                 })

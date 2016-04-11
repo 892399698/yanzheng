@@ -54,7 +54,7 @@
             console.log(res)
             if(res.code===1000){
               if(res.data){
-                var str="经系统验证,你所查询的防伪编码已被查询过.第一次查询的时间为:"+moment(res.data.create_time)+"  IP:"+res.data.ip;
+                var str="经系统验证,你所查询的防伪编码已被查询过.第一次查询的时间为:"+moment(res.data.create_time).format("YYYY-MM-DD HH:mm:ss")+"  IP:"+res.data.ip;
                 alert(str)
               }else{
                 // $(".modal-body").html("")
